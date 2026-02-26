@@ -26,7 +26,7 @@ export function Topbar({
   mobileNav,
 }: TopbarProps) {
   return (
-    <header className="flex items-center justify-between px-4 py-3 border-b bg-card">
+    <header className="flex items-center justify-between px-4 py-3 border-b topbar-glass sticky top-0 z-10">
       <div className="flex items-center gap-3">
         {/* Mobile nav (hamburger) — only visible on small screens */}
         <div className="md:hidden">{mobileNav}</div>

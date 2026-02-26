@@ -14,7 +14,7 @@ export function AppShell({ children, pageTitle }: AppShellProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-muted/30">
+    <div className="flex h-screen overflow-hidden bg-background">
       {/* Desktop sidebar */}
       <div className="hidden md:flex md:flex-col">
         <Sidebar collapsed={sidebarCollapsed} />
