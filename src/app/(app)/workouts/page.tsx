@@ -1,20 +1,30 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Dumbbell, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { WorkoutHistoryList } from "@/components/workout/workout-history-list";
+import { workoutService } from "@/lib/di";
+import { getCurrentUserId } from "@/lib/auth";
 
 export const metadata: Metadata = { title: "Workouts" };
 
-export default function WorkoutsPage() {
+export default async function WorkoutsPage() {
+  const userId = getCurrentUserId();
+  const sessions = await workoutService.getRecentWorkouts(userId, 20);
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2">
-            <Dumbbell className="w-6 h-6 text-[var(--workout)]" />
+            <Dumbbell className="w-6 h-6 text-(--workout)" />
             Workouts
           </h2>
-          <p className="text-muted-foreground mt-1">Log exercises, sets, and reps.</p>
+          <p className="text-muted-foreground mt-1">
+            {sessions.length > 0
+              ? `${sessions.length} session${sessions.length === 1 ? "" : "s"} logged`
+              : "Log exercises, sets, and reps."}
+          </p>
         </div>
         <Button asChild>
           <Link href="/workouts/log">
@@ -24,13 +34,7 @@ export default function WorkoutsPage() {
         </Button>
       </div>
 
-      <div className="rounded-xl border bg-card p-8 text-center shadow-sm">
-        <Dumbbell className="w-12 h-12 mx-auto mb-3 text-muted-foreground/30" />
-        <h3 className="font-semibold text-lg mb-1">Workout tracking coming in v0.3</h3>
-        <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-          Log workout sessions with exercises, sets, reps, and weights. Track your strength progress over time.
-        </p>
-      </div>
+      <WorkoutHistoryList sessions={sessions} />
     </div>
   );
 }
