@@ -1,8 +1,20 @@
 import type { Metadata } from "next";
+import { nutritionService } from "@/lib/di";
+import { getCurrentUserId } from "@/lib/auth";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const userId = getCurrentUserId();
+  const todaySummary = await nutritionService.getDailyNutritionSummary(userId, new Date());
+
+  const stats = [
+    { label: "Calories", value: todaySummary.totals.calories || "—", sub: "kcal today", color: "var(--nutrition)" },
+    { label: "Workouts", value: "—", sub: "this week", color: "var(--workout)" },
+    { label: "Weight", value: "—", sub: "kg current", color: "var(--progress-accent)" },
+    { label: "Water", value: "—", sub: "ml today", color: "var(--ai-accent)" },
+  ];
+
   return (
     <div>
       <div className="mb-6">
@@ -12,14 +24,8 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Placeholder stat cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        {[
-          { label: "Calories", value: "—", sub: "kcal today", color: "var(--nutrition)" },
-          { label: "Workouts", value: "—", sub: "this week", color: "var(--workout)" },
-          { label: "Weight", value: "—", sub: "kg current", color: "var(--progress-accent)" },
-          { label: "Water", value: "—", sub: "ml today", color: "var(--ai-accent)" },
-        ].map((stat) => (
+        {stats.map((stat) => (
           <div
             key={stat.label}
             className="rounded-xl border bg-card p-5 flex flex-col gap-1 shadow-sm"
@@ -38,12 +44,13 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* Placeholder sections */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="rounded-xl border bg-card p-5 shadow-sm">
           <h3 className="font-semibold mb-3">Today&apos;s Nutrition</h3>
           <p className="text-sm text-muted-foreground">
-            Nutrition tracking will appear here in v0.2.
+            {todaySummary.totals.calories > 0
+              ? `${todaySummary.totals.calories} kcal logged across ${todaySummary.entries.length} item${todaySummary.entries.length === 1 ? "" : "s"}.`
+              : "No meals logged yet today. Head to Nutrition to get started."}
           </p>
         </div>
         <div className="rounded-xl border bg-card p-5 shadow-sm">

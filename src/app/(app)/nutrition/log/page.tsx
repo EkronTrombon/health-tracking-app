@@ -2,12 +2,25 @@ import type { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { LogMealForm } from "@/components/nutrition/log-meal-form";
+import type { MealType } from "@/types/nutrition.types";
 
 export const metadata: Metadata = { title: "Log Meal" };
 
-export default function LogMealPage() {
+const VALID_MEAL_TYPES: MealType[] = ["breakfast", "lunch", "dinner", "snack"];
+
+interface LogMealPageProps {
+  searchParams: Promise<{ meal?: string }>;
+}
+
+export default async function LogMealPage({ searchParams }: LogMealPageProps) {
+  const { meal } = await searchParams;
+  const mealType: MealType = VALID_MEAL_TYPES.includes(meal as MealType)
+    ? (meal as MealType)
+    : "snack";
+
   return (
-    <div>
+    <div className="max-w-lg mx-auto">
       <div className="mb-6 flex items-center gap-3">
         <Button variant="ghost" size="icon" asChild className="h-8 w-8">
           <Link href="/nutrition">
@@ -20,10 +33,8 @@ export default function LogMealPage() {
         </div>
       </div>
 
-      <div className="rounded-xl border bg-card p-8 text-center shadow-sm">
-        <p className="text-sm text-muted-foreground">
-          Meal logging form will be built in v0.2.
-        </p>
+      <div className="rounded-xl border bg-card p-6 shadow-sm">
+        <LogMealForm defaultMealType={mealType} />
       </div>
     </div>
   );

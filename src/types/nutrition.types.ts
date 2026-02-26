@@ -29,10 +29,10 @@ export type FoodLogEntry = z.infer<typeof FoodLogEntrySchema>;
 export const LogMealSchema = z.object({
   foodName: z.string().min(1, "Food name is required").max(200),
   brandName: z.string().max(100).optional(),
-  calories: z.coerce.number().min(0, "Must be 0 or more").max(10000),
-  protein: z.coerce.number().min(0).max(1000),
-  carbs: z.coerce.number().min(0).max(1000),
-  fat: z.coerce.number().min(0).max(1000),
+  calories: z.number().min(0, "Must be 0 or more").max(10000),
+  protein: z.number().min(0).max(1000),
+  carbs: z.number().min(0).max(1000),
+  fat: z.number().min(0).max(1000),
   mealType: MealTypeSchema,
   note: z.string().max(500).optional(),
 });
